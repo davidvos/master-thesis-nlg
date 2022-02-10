@@ -49,7 +49,7 @@ Prefix-tuning is a novel approach that has only been explored to a certain amoun
 
 I will also condition the prefix on some (meta)data that can be found in the functional relations of data to see if such data can improve performance. In this step we could possibly introduce GCNs 
 
-A final contribution
+A final contribution could be the introduction of a Dutch soccer dataset containing match statistics and summaries.
 
 ### Example
 

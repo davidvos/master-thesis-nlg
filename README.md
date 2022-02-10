@@ -18,6 +18,11 @@ More information on practicalities can be found [here](https://student.uva.nl/ai
 
 These are the most important papers related to my thesis. 
 
- * [Have Your Text and Use It Too! End-to-End Neural Data-to-Text Generation with Semantic Fidelity](https://aclanthology.org/2020.coling-main.218/) (2020)
- * [Bridging the Structural Gap Between Encoding and Decoding for Data-To-Text Generation](https://aclanthology.org/2020.acl-main.224/) (2020)
- * [A Hierarchical Model for Data-to-Text Generation](https://link.springer.com/chapter/10.1007/978-3-030-45439-5_5) (2020) - with a working implementation
+[Text-to-Text Pre-Training for Data-to-Text Tasks](https://aclanthology.org/2020.inlg-1.14.pdf)
+Introduces fine-tuning for Data-to-Text tasks using T5.
+
+[Prefix-Tuning: Optimizing Continuous Prompts for Generation](https://aclanthology.org/2021.acl-long.353.pdf)
+Introduces prefix-tuning as a more efficient way of fine-tuning for data-to-text tasks.
+
+[Control Prefixes for Text Generation](https://arxiv.org/abs/2110.08329)
+Extends prefix-tuning so it is able to condition on input-based metadata.

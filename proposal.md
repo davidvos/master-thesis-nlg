@@ -55,7 +55,7 @@ A final contribution could be the introduction of a Dutch soccer dataset contain
 
 **Create an example, ideally with a figure, which exemplifies the problem and can be used to guide readers through your proposed approach**
  
-Dutch sports reporting for amateur matches.
+*work in progress*
 
 ### Experimental Evaluation
 

@@ -22,7 +22,9 @@ Alhough prefix-tuning has shown to achieve SOTA performance on English data-to-t
 
 **Why is the problem important?**
 
-Natural language modelling has shown great promise on a wide range of tasks. However, a single model already has billions of parameters. When fine-tuning for individual tasks, billions of new parameters are introduced for every new task. A 'new task' can also be interpreted as learning a task for a single user, making it important for finetuning approaches to become more scalable. Especially when deployed in a production environment. Prefix-tuning is extremely scalable and should thus be preferred when performance doesn't suffer from the limited expressiveness.
+Natural language modelling has shown great promise on a wide range of tasks. However, a single model already has billions of parameters. When fine-tuning for individual tasks, billions of new parameters are introduced for every new task. A 'new task' can already be interpreted as something as small such as learning a task for a single user. This makes it important for finetuning approaches to become more scalable, especially when when deployed in a production environment. Otherwise, memory requirements and development time will greatly increase. This will then have a large impact on energy consumption resulting in business costs and ecological footprint.
+
+Prefix-tuning is extremely scalable and should thus be preferred when it can be shown that performance doesn't suffer from the limited expressiveness.
 
 **Why is the problem non-trivial?**
 
@@ -38,11 +40,11 @@ The current state of the art relies on training huge language models for specifi
 My thesis will focus on experimenting with different applications and approaches of prefix-tuning. These are the following:
 
 - **The performance of prefix-tuning in a multilingual setting**
-   Prefix-tuning has shown excellent performance on language generation tasks. For example, the WebNLG challenge is an English benchmark for data-to-text generation. However, we ask the question if the limited amount of prefix parameters contains enough expressiveness when the pre-trained LM is multilingual?
-
+   Prefix-tuning has shown excellent performance on language generation tasks. The WebNLG challenge is an English benchmark for data-to-text generation that this was measures on. However, we ask the question if the limited amount of prefix parameters contains enough expressiveness when the used pre-trained LM is multilingual? We can experiment with conditioning the prefix on the language of an input sequence
+   
 - **Conditioning prefix on structural information**
-   Can we condition our prefix on information obtained my looking at functional relations in the input data? For example, can we utilize a GCN to create the prefix? Or can we 
-
+   Can we condition our prefix on information obtained by doing more with the structure found in the input data. For example, can we use a GCN to create a representation of the input sequence and use this as a prefix. Or simply stated, will making our prefix 'network' more complex result in better results?
+   
 **List the novel contributions provided by your approach**
 
 Prefix-tuning is a novel approach that has only been explored to a certain amount. I will show whether or not the limited expressiveness of prefix-tuning will work with a multilingual LM which per definition contains more expressiveness. 
@@ -55,13 +57,23 @@ A final contribution could be the introduction of a Dutch soccer dataset contain
 
 **Create an example, ideally with a figure, which exemplifies the problem and can be used to guide readers through your proposed approach**
  
-Dutch sports reporting for amateur matches.
+![[images/prefixtuning.png]]
+
+In the figure above (from the original prefix-tuning paper), it be seen how prefix-tuning differs from fine-tuning. Instead of finetuning an entire language model, a prepended prefix is tuned and the LM is frozen. Our idea is to experiment with the pre-trained Transformer being multilingual and evaluating on datasets in different languages.
+
+![[images/controlprefixes.png]]
+
+The figure above comes from the Control Prefixes paper. This approach combines a general task prefix with control prefixes which are based on metadata of the input sequence. This can be a certain dataset category for example. We propose using this guidance prefix to be connected to the language of the input. 
+
+We would also like to experiment with prepending a graph representation of the data structure to the input sequence to help the network capture the structural relations found in the input. We could combine this with a general prefix as can be seen in the first figure.
 
 ### Experimental Evaluation
 
 **How should the quality of your method be measured?**
 
 We will evaluate our method based on standard text generation metrics like BLEU, METEOR, BLEURT, etc. For each structured data sample we have a corresponding textual description, allowing us to use these metrics.
+
+It would also be interesting to do a qualitative analysis of our approach at DPG Media, the company this thesis is written at. 
 
 **What are baseline techniques that your method should be compared to?**
 

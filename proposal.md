@@ -57,11 +57,12 @@ A final contribution could be the introduction of a Dutch soccer dataset contain
 
 **Create an example, ideally with a figure, which exemplifies the problem and can be used to guide readers through your proposed approach**
  
-![[images/prefixtuning.png]]
+![Prefix Tuning](./images/prefixtuning.png)
 
 In the figure above (from the original prefix-tuning paper), it be seen how prefix-tuning differs from fine-tuning. Instead of finetuning an entire language model, a prepended prefix is tuned and the LM is frozen. Our idea is to experiment with the pre-trained Transformer being multilingual and evaluating on datasets in different languages.
 
-![[images/controlprefixes.png]]
+![Control Prefixes](./images/controlprefixes.png)
+
 
 The figure above comes from the Control Prefixes paper. This approach combines a general task prefix with control prefixes which are based on metadata of the input sequence. This can be a certain dataset category for example. We propose using this guidance prefix to be connected to the language of the input. 
 

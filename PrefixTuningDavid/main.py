@@ -11,7 +11,9 @@ from models import PrefixTuning
 
 # logging.basicConfig(level=logging.ERROR)
 
-def main(n_epochs=1, device='cpu', lr=0.001, accum=32):
+def main(n_epochs=1, lr=0.001, accum=32):
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     dataset = WebNLG()
     dataloader = DataLoader(dataset, batch_size=4)

@@ -27,6 +27,9 @@ Introduces prefix-tuning as a more efficient way of fine-tuning for data-to-text
 [Control Prefixes for Text Generation](https://arxiv.org/abs/2110.08329)
 Extends prefix-tuning so it is able to condition on input-based metadata.
 
+[[Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in Natural Language Processing]](https://arxiv.org/pdf/2107.13586.pdf?ref=https://githubhelp.com)
+Survey on the field of prompt-learnin / prefix-tuning methods.
+
 ## Main Todos
 
 #### Multilingual Prefixes
@@ -38,3 +41,8 @@ Extends prefix-tuning so it is able to condition on input-based metadata.
  * Integrate GCN in prefix tuning method
  * Train baseline prefix tuning method on WebNLG
  * Train GCN prefix tuning method on WebNLG
+
+ #### Creation Dutch soccer dataset
+ * Complete and extend web scraper for statistics
+ * Create script that connects statistics to summaries
+ * Format dataset to usable (WebNLG-like) format

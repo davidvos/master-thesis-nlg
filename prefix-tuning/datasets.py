@@ -6,9 +6,7 @@ import os
 import json
 import copy
 
-from benchmark_reader import Benchmark
-from benchmark_reader import select_files
-
+from data.benchmark_reader import Benchmark, select_files
 class WebNLG:
 
     def __init__(self, raw_path='data/release_v3.0/en', data_path='data/preprocessed', split='train'):

@@ -29,7 +29,7 @@ def main(n_epochs=1, lr=0.001, accum=32):
 
     optimizer=AdamW(prefix_model.parameters(), lr=lr)
 
-    for epoch in range(1, n_epochs+1):
+    for epoch in range(1, n_epochs + 1):
 
         print('Running epoch: {}'.format(epoch))
 
@@ -52,7 +52,7 @@ def main(n_epochs=1, lr=0.001, accum=32):
             # Forward: Base (Pre-Trained) LM
             outputs = pretrained(input_ids=samples, labels=summaries, past_key_values=past_key_values)
 
-            loss = outputs[0]/accum
+            loss = outputs[0] / accum
             loss.backward()
             loss_train += loss.item()
             

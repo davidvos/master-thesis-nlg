@@ -26,3 +26,14 @@ Introduces prefix-tuning as a more efficient way of fine-tuning for data-to-text
 
 [Control Prefixes for Text Generation](https://arxiv.org/abs/2110.08329)
 Extends prefix-tuning so it is able to condition on input-based metadata.
+
+## Main Todos
+
+### Multilingual Prefixes
+ * Transfer method to T5 language model
+ * Finetune full T5 model on English/Russian WebNLG
+ * Train prefix with multilingual model on English/Russian WebNLG 
+ 
+ ### Graph CNN for prefix tuning
+ * Integrate GCN in prefix tuning method
+ * Run baseline & GCN experiments 

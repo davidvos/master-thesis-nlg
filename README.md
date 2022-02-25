@@ -37,7 +37,8 @@ Survey on the field of prompt-learnin / prefix-tuning methods.
  * Finetune full T5 model on English/Russian WebNLG
  * Train prefix with multilingual model on English/Russian WebNLG 
  
- #### Graph CNN for prefix tuning
+ #### More structural approach towards prefix tuning
+ * Read into GCN/translation methods
  * Integrate GCN in prefix tuning method
  * Train baseline prefix tuning method on WebNLG
  * Train GCN prefix tuning method on WebNLG

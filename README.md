@@ -29,11 +29,12 @@ Extends prefix-tuning so it is able to condition on input-based metadata.
 
 ## Main Todos
 
-### Multilingual Prefixes
+#### Multilingual Prefixes
  * Transfer method to T5 language model
  * Finetune full T5 model on English/Russian WebNLG
  * Train prefix with multilingual model on English/Russian WebNLG 
  
- ### Graph CNN for prefix tuning
+ #### Graph CNN for prefix tuning
  * Integrate GCN in prefix tuning method
- * Run baseline & GCN experiments 
+ * Train baseline prefix tuning method on WebNLG
+ * Train GCN prefix tuning method on WebNLG

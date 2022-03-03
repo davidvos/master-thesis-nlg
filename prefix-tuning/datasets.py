@@ -12,7 +12,7 @@ class WebNLG:
 
     def __init__(self, raw_path='data/release_v3.0/en', data_path='data/preprocessed', split='train'):
 
-        tokenizer = AutoTokenizer.from_pretrained("google/mt5-large")
+        tokenizer = AutoTokenizer.from_pretrained("google/t5-small")
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
         if not os.path.exists(f'{data_path}/{split}.json'):

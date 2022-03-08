@@ -15,7 +15,7 @@ def main(n_epochs=2, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     train_dataset = WebNLG(raw_path='data/release_v3.0/en/train', split='train')
-    train_dataloader = DataLoader(train_dataset, batch_size=16, shuffle=True, drop_last=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=8, shuffle=True, drop_last=True)
 
     test_dataset = WebNLG(raw_path='data/release_v3.0/en/dev', split='dev')
     test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, drop_last=True)

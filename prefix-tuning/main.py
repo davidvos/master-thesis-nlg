@@ -10,7 +10,7 @@ from datasets import WebNLG
 from models import PrefixTuning
 from utils import generate_data
 
-def main(n_epochs=2, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
+def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -66,8 +66,7 @@ def main(n_epochs=2, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
                 optimizer.step()
                 optimizer.zero_grad()
 
-            generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
-
+    generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
 
 if __name__ == "__main__":
     main()

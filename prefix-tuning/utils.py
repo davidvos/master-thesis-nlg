@@ -1,3 +1,5 @@
+import torch
+
 def expand_to_batchsize_for_layer(tup, batch_size, layer_id):
     return tup[layer_id].expand(-1, batch_size, -1, -1, -1)
 
@@ -7,6 +9,9 @@ def generate_data(prefix_model, dataloader, tokenizer, device, epoch, lr, preseq
             prefix_model.eval()
 
             samples = batch[0].squeeze().to(device)
+
+            if len(list(samples.shape)) == 1:
+                samples = torch.unsqueeze(samples, 0)
 
             # Get Past-Key-Values
             past_key_values = prefix_model(batch_size=samples.shape[0])

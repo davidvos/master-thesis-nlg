@@ -10,22 +10,22 @@ from datasets import WebNLG
 from models import PrefixTuning
 from utils import generate_data
 
-def main(n_epochs=2, lr=0.001, accum=32):
+def main(n_epochs=2, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     train_dataset = WebNLG(raw_path='data/release_v3.0/en/train', split='train')
-    train_dataloader = DataLoader(train_dataset, batch_size=4, shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=32, shuffle=True, drop_last=True)
 
     test_dataset = WebNLG(raw_path='data/release_v3.0/en/dev', split='dev')
-    test_dataloader = DataLoader(test_dataset, batch_size=4, shuffle=False)
+    test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False, drop_last=True)
 
     # Load Pre-Trained Tokenizer, LM
     pretrained = T5ForConditionalGeneration.from_pretrained("t5-small" )
     pretrained = pretrained.to(device)
     pretrained.resize_token_embeddings(len(train_dataset.tokenizer))
     
-    prefix_model = PrefixTuning(model=pretrained)
+    prefix_model = PrefixTuning(model=pretrained, preseqlen=preseqlen, hidden_dim=hidden_dim)
     prefix_model.to(device)
 
     optimizer = AdamW(prefix_model.parameters(), lr=lr)
@@ -34,7 +34,7 @@ def main(n_epochs=2, lr=0.001, accum=32):
 
         print('Running epoch: {}'.format(epoch))
 
-        loss_train=0
+        loss_train = 0
 
         for step, batch in enumerate(train_dataloader):
 
@@ -66,7 +66,7 @@ def main(n_epochs=2, lr=0.001, accum=32):
                 optimizer.step()
                 optimizer.zero_grad()
 
-        generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device)
+            generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
 
 
 if __name__ == "__main__":

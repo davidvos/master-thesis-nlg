@@ -263,7 +263,7 @@ def bleurt(references, hypothesis, num_refs, checkpoint = "metrics/bleurt/bleurt
             refs.append(ref)
 
     scorer = bleurt_score.BleurtScorer(checkpoint)
-    scores = scorer.score(refs, cands)
+    scores = scorer.score(references=refs, candidates=cands)
     scores = [max(scores[i:i+num_refs]) for i in range(0, len(scores), num_refs)]
     return round(sum(scores) / len(scores), 2)
 
@@ -312,7 +312,7 @@ if __name__ == '__main__':
     argParser.add_argument("-H", "--hypothesis", help="hypothesis translation", default='data/en/hypothesis')
     argParser.add_argument("-lng", "--language", help="evaluated language", default='en')
     argParser.add_argument("-nr", "--num_refs", help="number of references", type=int, default=4)
-    argParser.add_argument("-m", "--metrics", help="evaluation metrics to be computed", default='bleu,meteor,ter,chrf++,bert')
+    argParser.add_argument("-m", "--metrics", help="evaluation metrics to be computed", default='bleu,meteor,ter,chrf++,bert,bleurt')
     argParser.add_argument("-nc", "--ncorder", help="chrF metric: character n-gram order (default=6)", type=int, default=6)
     argParser.add_argument("-nw", "--nworder", help="chrF metric: word n-gram order (default=2)", type=int, default=2)
     argParser.add_argument("-b", "--beta", help="chrF metric: beta parameter (default=2)", type=float, default=2.0)

@@ -4,6 +4,7 @@ def expand_to_batchsize_for_layer(tup, batch_size, layer_id):
     return tup[layer_id].expand(-1, batch_size, -1, -1, -1)
 
 def generate_data(prefix_model, dataloader, tokenizer, device, epoch, lr, preseqlen, hidden_dim):
+    print(f'Generate eval file epoch for {epoch}')
     with open(f'data/generated/epoch{epoch}_lr{lr}_preseqlen{preseqlen}_hiddendim{hidden_dim}.txt', 'w') as f:
         for _, batch in enumerate(dataloader):
             prefix_model.eval()
@@ -18,5 +19,5 @@ def generate_data(prefix_model, dataloader, tokenizer, device, epoch, lr, preseq
             prefix_model.past_key_values = past_key_values
 
             outputs = prefix_model.model.generate(samples)
-
-            f.write(f'{tokenizer.decode(outputs[0], skip_special_tokens=True)}\n')        
+            f.write(f'{tokenizer.decode(outputs[0], skip_special_tokens=True)}')
+            f.write('\n')

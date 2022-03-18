@@ -65,6 +65,7 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
                 optimizer.step()
                 optimizer.zero_grad()
+            break
 
         generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
 

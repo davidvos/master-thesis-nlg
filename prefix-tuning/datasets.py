@@ -45,6 +45,8 @@ class WebNLG:
                     full_tgt_lst.append(sent["lex"])
                     full_src_lst.append(temp_triples)
                     full_rela_lst.append(rela_lst)
+                    if split == 'dev':
+                        break
             
         assert len(full_rela_lst) == len(full_src_lst)
         assert len(full_rela_lst) == len(full_tgt_lst)

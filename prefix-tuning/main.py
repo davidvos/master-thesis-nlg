@@ -38,8 +38,6 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
         for step, batch in enumerate(train_dataloader):
 
-            print(step)
-
             prefix_model.train()
 
             samples = batch[0].squeeze().to(device)

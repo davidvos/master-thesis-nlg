@@ -48,6 +48,10 @@ class PrefixTuning(nn.Module):
             temp_control = self.wte(input_tokens)
             past_key_values = self.control_trans(temp_control) #bsz, seqlen, layer*emb
             _, seqlen, _ = past_key_values.shape
+            # print(f'shape match n embd: {self.match_n_embd}')
+            # print(f'shape match n layer: {self.match_n_layer}')
+            # print(f'shape match n head: {self.match_n_head}')
+            # print(f'past_key_values shape: {past_key_values.shape}')
             past_key_values = past_key_values.view(batch_size, seqlen, self.match_n_layer * 2, self.match_n_head,
                                                 self.match_n_embd)
             past_key_values = self.dropout(past_key_values)

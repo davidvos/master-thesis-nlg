@@ -52,6 +52,8 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
             prefix_model.past_key_values = past_key_values
 
             # Forward: Base (Pre-Trained) LM
+            print(samples.shape)
+            print(summaries.shape)
             outputs = prefix_model.model(input_ids=samples, labels=summaries)
 
             loss = outputs[0] / accum

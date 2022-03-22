@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-from transformers import MT5Config, T5ForConditionalGeneration
+from transformers import MT5Config, MT5ForConditionalGeneration
 from utils import expand_to_batchsize_for_layer
 from functools import partial
 
@@ -22,8 +22,10 @@ class PrefixTuning(nn.Module):
 
         if isinstance(self.config, MT5Config):
             self.n_layer = self.config.num_layers
+            self.n_layer = 6
             self.n_embd = self.config.d_model
             self.n_head = self.config.num_heads
+            self.n_head = 8
             self.n_decoder_layer = self.config.num_decoder_layers
             self.match_n_decoder_layer = self.n_decoder_layer
             self.match_n_layer = self.n_layer
@@ -48,9 +50,6 @@ class PrefixTuning(nn.Module):
             temp_control = self.wte(input_tokens)
             past_key_values = self.control_trans(temp_control) #bsz, seqlen, layer*emb
             _, seqlen, _ = past_key_values.shape
-            print(f'shape match n embd: {self.match_n_embd}')
-            print(f'shape match n layer: {self.match_n_layer}')
-            print(f'shape match n head: {self.match_n_head}')
             print(f'shape past_key_values: {past_key_values.shape}')
             past_key_values = past_key_values.view(batch_size, seqlen, self.match_n_layer * 2, self.match_n_head,
                                                 self.match_n_embd)
@@ -81,7 +80,7 @@ class PrefixTuning(nn.Module):
     def modify_plm(self, model):
         if self.plm_modified:
             return None
-        if isinstance(model, T5ForConditionalGeneration):
+        if isinstance(model, MT5ForConditionalGeneration):
             backup_encoder_forward_functions = []
             for i, layer_module in enumerate(model.encoder.block):
                 backup_encoder_forward_functions.append(layer_module.layer[0].forward)

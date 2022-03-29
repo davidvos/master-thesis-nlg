@@ -5,6 +5,8 @@ from transformers import AdamW
 
 import logging
 import torch
+from tqdm import tqdm
+
 
 from datasets import WebNLG
 from models import PrefixTuning
@@ -36,9 +38,7 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
         loss_train = 0
 
-        for step, batch in enumerate(train_dataloader):
-
-            print(f'{step}/{len(train_dataloader)}')
+        for step, batch in enumerate(tqdm(train_dataloader)):
 
             prefix_model.train()
 

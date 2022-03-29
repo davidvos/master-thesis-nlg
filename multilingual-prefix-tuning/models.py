@@ -22,17 +22,17 @@ class PrefixTuning(nn.Module):
 
         if isinstance(self.config, MT5Config):
             self.n_layer = self.config.num_layers
-            self.n_layer = 6
             self.n_embd = self.config.d_model
             self.n_head = self.config.num_heads
-            self.n_head = 8
             self.n_decoder_layer = self.config.num_decoder_layers
             self.match_n_decoder_layer = self.n_decoder_layer
             self.match_n_layer = self.n_layer
        
         self.mid_dim = hidden_dim
         self.match_n_head = self.n_head
-        self.match_n_embd = self.n_embd // self.n_head
+        # self.match_n_embd = self.n_embd // self.n_head
+        # Hardcode this as the documentation of mT5 is inconsistent and uses 64 instead of the 'original' way on line 33
+        self.match_n_embd = 64
         self.prefix_dropout = 0.0
         self.dropout = nn.Dropout(self.prefix_dropout)
 
@@ -50,9 +50,7 @@ class PrefixTuning(nn.Module):
             temp_control = self.wte(input_tokens)
             past_key_values = self.control_trans(temp_control) #bsz, seqlen, layer*emb
             _, seqlen, _ = past_key_values.shape
-            print(f'shape past_key_values: {past_key_values.shape}')
-            past_key_values = past_key_values.view(batch_size, seqlen, self.match_n_layer * 2, self.match_n_head,
-                                                self.match_n_embd)
+            past_key_values = past_key_values.view(batch_size, seqlen, self.match_n_layer * 2, self.match_n_head, self.match_n_embd)
             past_key_values = self.dropout(past_key_values)
             past_key_values = past_key_values.permute([2, 0, 3, 1, 4]).split(2)
             pvs.append(past_key_values)
@@ -75,7 +73,9 @@ class PrefixTuning(nn.Module):
                 nn.Tanh(),
                 # nn.Linear(self.mid_dim, self.mid_dim),
                 # nn.Tanh(),
-                nn.Linear(self.mid_dim, self.n_layer * 2 * self.n_embd))
+                nn.Linear(self.mid_dim, 6144))
+
+
 
     def modify_plm(self, model):
         if self.plm_modified:

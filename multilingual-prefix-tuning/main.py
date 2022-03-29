@@ -1,5 +1,5 @@
 from sys import prefix
-from transformers import MT5ForConditionalGeneration
+from transformers import MT5ForConditionalGeneration, MT5Config
 from torch.utils.data import DataLoader
 from transformers import AdamW
 
@@ -21,7 +21,8 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
     test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, drop_last=True)
 
     # Load Pre-Trained Tokenizer, LM
-    pretrained = MT5ForConditionalGeneration.from_pretrained("google/mt5-small")
+    pretrained_config = MT5Config(d_model=516)
+    pretrained = MT5ForConditionalGeneration(pretrained_config).from_pretrained("google/mt5-small")
     pretrained = pretrained.to(device)
     pretrained.resize_token_embeddings(len(train_dataset.tokenizer))
     

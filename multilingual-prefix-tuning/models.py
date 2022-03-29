@@ -75,8 +75,6 @@ class PrefixTuning(nn.Module):
                 # nn.Tanh(),
                 nn.Linear(self.mid_dim, 6144))
 
-
-
     def modify_plm(self, model):
         if self.plm_modified:
             return None

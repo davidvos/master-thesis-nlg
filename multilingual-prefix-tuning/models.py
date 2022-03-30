@@ -43,6 +43,9 @@ class PrefixTuning(nn.Module):
         self.plm_modified = False # flag to indicate whether the function of plm are replaced for prefix tuning.
         self.model = self.modify_plm(model)
         
+        for name, param in self.model.named_parameters():                
+            param.requires_grad = False
+        
     def forward(self, batch_size=4):
         pvs = []
         if self.config.is_encoder_decoder and self.using_encoder_past_key_values:
@@ -65,7 +68,6 @@ class PrefixTuning(nn.Module):
         """
         
         self.input_tokens = nn.Parameter(torch.arange(self.num_token).long(), requires_grad=False) # to allow automatic devicing
-        print(self.config.is_encoder_decoder)
         if self.config.is_encoder_decoder and self.using_encoder_past_key_values:
             self.wte = nn.Embedding(self.num_token, self.n_embd)
             self.control_trans = nn.Sequential(

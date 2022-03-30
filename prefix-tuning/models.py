@@ -41,6 +41,9 @@ class PrefixTuning(nn.Module):
         self.plm_modified = False # flag to indicate whether the function of plm are replaced for prefix tuning.
         self.model = self.modify_plm(model)
         
+        for name, param in self.model.named_parameters():                
+            param.requires_grad = False
+        
     def forward(self, batch_size=4):
         pvs = []
         if self.config.is_encoder_decoder and self.using_encoder_past_key_values:
@@ -48,7 +51,6 @@ class PrefixTuning(nn.Module):
             temp_control = self.wte(input_tokens)
             past_key_values = self.control_trans(temp_control) #bsz, seqlen, layer*emb
             _, seqlen, _ = past_key_values.shape
-            print(past_key_values.shape)
             past_key_values = past_key_values.view(batch_size, seqlen, self.match_n_layer * 2, self.match_n_head,
                                                 self.match_n_embd)
             past_key_values = self.dropout(past_key_values)

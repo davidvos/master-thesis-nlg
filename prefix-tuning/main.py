@@ -5,13 +5,12 @@ from transformers import AdamW
 
 import logging
 import torch
-import tqdm
 
 from datasets import WebNLG
 from models import PrefixTuning
 from utils import generate_data
 
-def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
+def main(n_epochs=50, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -29,7 +28,7 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
     prefix_model = PrefixTuning(model=pretrained, preseqlen=preseqlen, hidden_dim=hidden_dim)
     prefix_model.to(device)
 
-    optimizer = AdamW(prefix_model.parameters(), lr=lr)
+    optimizer = AdamW(filter(lambda p: p.requires_grad, prefix_model.parameters()), lr=lr)
 
     for epoch in range(1, n_epochs + 1):
 
@@ -37,7 +36,9 @@ def main(n_epochs=5, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
         loss_train = 0
 
-        for step, batch in enumerate(tqdm(train_dataloader)):
+        for step, batch in enumerate(train_dataloader):
+             
+            print(f'{step}/{len(train_dataloader)}')
 
             prefix_model.train()
 

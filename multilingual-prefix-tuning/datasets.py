@@ -40,7 +40,7 @@ class WebNLG:
                 temp_triples += '{} : {} : {}'.format(subj, rela, obj)
 
             for sent in sents:
-                if sent["lang"] == language:
+                if sent["lang"] == language or language == 'both':
                     full_tgt_lst.append(sent["lex"])
                     full_src_lst.append(temp_triples)
                     full_rela_lst.append(rela_lst)

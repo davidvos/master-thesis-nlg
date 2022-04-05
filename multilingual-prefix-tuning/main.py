@@ -15,7 +15,7 @@ from utils import generate_data
 gc.collect()
 torch.cuda.empty_cache()
 
-def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size=4):
+def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size=2):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

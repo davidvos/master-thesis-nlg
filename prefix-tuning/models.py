@@ -11,8 +11,8 @@ class PrefixTuning(nn.Module):
     def __init__(self, model, preseqlen=5, hidden_dim=512):
         super().__init__()
 
-        raw_embedding = model.get_input_embeddings()
-        self.config = model.config
+        raw_embedding = model.model.get_input_embeddings()
+        self.config = model.model.config
         self.mapping_hook = None
         self.embedding_size = raw_embedding.weight.shape[-1]
         self.num_token = preseqlen
@@ -33,16 +33,8 @@ class PrefixTuning(nn.Module):
         self.match_n_embd = self.n_embd // self.n_head
         self.prefix_dropout = 0.0
         self.dropout = nn.Dropout(self.prefix_dropout)
-
-        self.past_key_values = None
         
         self.generate_parameters() # in prefix tuning the template text has no interact with the parameters.
-
-        self.plm_modified = False # flag to indicate whether the function of plm are replaced for prefix tuning.
-        self.model = self.modify_plm(model)
-        
-        for name, param in self.model.named_parameters():                
-            param.requires_grad = False
         
     def forward(self, batch_size=4):
         pvs = []
@@ -75,6 +67,23 @@ class PrefixTuning(nn.Module):
                 # nn.Linear(self.mid_dim, self.mid_dim),
                 # nn.Tanh(),
                 nn.Linear(self.mid_dim, self.n_layer * 2 * self.n_embd))
+            
+class PretrainedModel(nn.Module):
+
+    def __init__(self, preseqlen=5):
+        super().__init__()
+        
+        self.model = T5ForConditionalGeneration.from_pretrained("t5-small")
+        self.past_key_values = None
+        
+        for name, param in self.model.named_parameters():                
+            param.requires_grad = False
+            
+        self.num_token = preseqlen
+        self.plm_modified = False
+        
+        self.model = self.modify_plm(self.model)
+        
 
     def modify_plm(self, model):
         if self.plm_modified:

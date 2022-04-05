@@ -9,9 +9,9 @@ import logging
 import torch
 
 from datasets import WebNLG
-from models import PrefixTuning
+from models import PrefixTuning, PretrainedModel
 from utils import generate_data
-
+            
 def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size=4):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -23,14 +23,15 @@ def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size
     test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, drop_last=True)
 
     # Load Pre-Trained Tokenizer, LM
-    pretrained = T5ForConditionalGeneration.from_pretrained("t5-small" )
+    pretrained = PretrainedModel()
     pretrained = pretrained.to(device)
-    pretrained.resize_token_embeddings(len(train_dataset.tokenizer))
+    
+#     pretrained.resize_token_embeddings(len(train_dataset.tokenizer))
     
     prefix_model = PrefixTuning(model=pretrained, preseqlen=preseqlen, hidden_dim=hidden_dim)
     prefix_model.to(device)
 
-    optimizer = AdamW(filter(lambda p: p.requires_grad, prefix_model.parameters()), lr=lr)
+    optimizer = AdamW(prefix_model.parameters(), lr=lr)
 
     scheduler = get_linear_schedule_with_warmup(
         optimizer=optimizer,
@@ -44,28 +45,27 @@ def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size
     step_global=0
 
     for epoch in range(1, n_epochs + 1):
+        
+        prefix_model.train()
 
         print('Running epoch: {}'.format(epoch))
 
         loss_train = 0
+        optimizer.zero_grad()
 
         for step, batch in enumerate(train_dataloader):
              
             print(f'{step}/{len(train_dataloader)}')
 
-            prefix_model.train()
-
             samples = batch[0].squeeze().to(device)
             summaries = batch[1].squeeze().to(device)
 
-            optimizer.zero_grad()
-
             # Get Past-Key-Values
             past_key_values = prefix_model(batch_size=samples.shape[0])
-            prefix_model.past_key_values = past_key_values
+            pretrained.past_key_values = past_key_values
 
             # Forward: Base (Pre-Trained) LM
-            outputs = prefix_model.model(input_ids=samples, labels=summaries)
+            outputs = pretrained.model(input_ids=samples, labels=summaries)
 
             loss = outputs[0] / accum
             loss.backward()
@@ -89,7 +89,7 @@ def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size
 
                 optimizer.zero_grad()
 
-        generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
+        generate_data(pretrained, prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)
 
 if __name__ == "__main__":
     main()

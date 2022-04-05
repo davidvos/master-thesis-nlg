@@ -2,6 +2,8 @@ from sys import prefix
 from transformers import T5ForConditionalGeneration, T5Config
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
+from torch.utils.tensorboard import SummaryWriter
+
 
 import logging
 import torch
@@ -37,6 +39,10 @@ def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size
         num_training_steps=int(n_epochs * len(train_dataloader) / (accum * batch_size))
     )
 
+    writer = SummaryWriter()
+
+    step_global=0
+
     for epoch in range(1, n_epochs + 1):
 
         print('Running epoch: {}'.format(epoch))
@@ -66,6 +72,14 @@ def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size
             loss_train += loss.item()
             
             if (step + 1) % accum == 0:
+                step_global+=1
+                
+                # TensorBoard
+                writer.add_scalar(
+                    f'loss_train/prefix-tuning-preseqlen{preseqlen}_hidden{hidden_dim}_batch{batch_size * accum}_lr{lr}_epoch{n_epochs}',
+                    loss_train,
+                    step_global
+                )
 
                 # Set Loss to 0
                 loss_train = 0

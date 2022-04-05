@@ -1,7 +1,7 @@
 from sys import prefix
 from transformers import T5ForConditionalGeneration, T5Config
 from torch.utils.data import DataLoader
-from transformers import AdamW
+from transformers import AdamW, get_linear_schedule_with_warmup
 
 import logging
 import torch
@@ -10,14 +10,14 @@ from datasets import WebNLG
 from models import PrefixTuning
 from utils import generate_data
 
-def main(n_epochs=50, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
+def main(n_epochs=50, lr=5e-5, accum=32, preseqlen=5, hidden_dim=512, batch_size=4):
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = WebNLG(raw_path='data/release_v3.0/en/train', split='train')
-    train_dataloader = DataLoader(train_dataset, batch_size=8, shuffle=True, drop_last=True)
+    train_dataset = WebNLG(raw_path='../data/release_v3.0/ru/train', language='en', split='train')
+    train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
-    test_dataset = WebNLG(raw_path='data/release_v3.0/en/dev', split='dev')
+    test_dataset = WebNLG(raw_path='../data/release_v3.0/ru/dev', language='en', split='dev')
     test_dataloader = DataLoader(test_dataset, batch_size=1, shuffle=False, drop_last=True)
 
     # Load Pre-Trained Tokenizer, LM
@@ -29,6 +29,13 @@ def main(n_epochs=50, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
     prefix_model.to(device)
 
     optimizer = AdamW(filter(lambda p: p.requires_grad, prefix_model.parameters()), lr=lr)
+
+    scheduler = get_linear_schedule_with_warmup(
+        optimizer=optimizer,
+        # 3% of Total Steps
+        num_warmup_steps=int(0.03 * n_epochs * len(train_dataloader) / (accum * batch_size)),
+        num_training_steps=int(n_epochs * len(train_dataloader) / (accum * batch_size))
+    )
 
     for epoch in range(1, n_epochs + 1):
 
@@ -62,8 +69,10 @@ def main(n_epochs=50, lr=0.001, accum=32, preseqlen=5, hidden_dim=512):
 
                 # Set Loss to 0
                 loss_train = 0
-
+                
                 optimizer.step()
+                scheduler.step()
+
                 optimizer.zero_grad()
 
         generate_data(prefix_model, test_dataloader, test_dataset.tokenizer, device, epoch, lr, preseqlen, hidden_dim)

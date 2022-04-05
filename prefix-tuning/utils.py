@@ -5,9 +5,9 @@ def expand_to_batchsize_for_layer(tup, batch_size, layer_id):
 
 def generate_data(prefix_model, dataloader, tokenizer, device, epoch, lr, preseqlen, hidden_dim):
     print(f'Generate eval file epoch for {epoch}')
-    with open(f'data/generated/epoch{epoch}_lr{lr}_preseqlen{preseqlen}_hiddendim{hidden_dim}.txt', 'w') as f:
+    with open(f'../results/prefix-tuning/epoch{epoch}_lr{lr}_preseqlen{preseqlen}_hiddendim{hidden_dim}.txt', 'w') as f:
         with torch.no_grad():
-            for i, batch in enumerate(dataloader):
+            for _, batch in enumerate(dataloader):
                 prefix_model.eval()
 
                 samples = batch[0].squeeze().to(device)

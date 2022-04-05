@@ -1,18 +1,17 @@
 from torch.utils.data import Dataset
 import torch
-from transformers import GPT2Tokenizer
-from transformers import T5Tokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, GPT2Tokenizer
 
 import os
 import json
 import copy
 
-from data.benchmark_reader import Benchmark, select_files
+from benchmark_reader import Benchmark, select_files
 class WebNLG:
 
-    def __init__(self, raw_path='data/release_v3.0/en', data_path='data/preprocessed', split='train'):
+    def __init__(self, raw_path='../data/release_v3.0/ru', language='ru', data_path='../data/preprocessed', split='train'):
 
-        tokenizer = T5Tokenizer.from_pretrained("google/mt5-small")
+        tokenizer = AutoTokenizer.from_pretrained("t5-small")
         tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
         if not os.path.exists(f'{data_path}/{split}.json'):
@@ -41,7 +40,7 @@ class WebNLG:
                 temp_triples += '{} : {} : {}'.format(subj, rela, obj)
 
             for sent in sents:
-                if sent["comment"] == 'good':
+                if sent["lang"] == language:
                     full_tgt_lst.append(sent["lex"])
                     full_src_lst.append(temp_triples)
                     full_rela_lst.append(rela_lst)
